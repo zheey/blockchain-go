@@ -2,8 +2,7 @@ package blockchain
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"encoding/hex"
+	"crypto/md5"
 )
 
 type Block struct {
@@ -14,7 +13,20 @@ type Block struct {
 
 func (b *Block) ComputeHash ()   {
 	concatenatedData := bytes.Join([][]byte{[]byte(b.Data), []byte(b.PrevHash)}, []byte{})
-	computedHash := sha256.Sum256(concatenatedData)
+	computedHash := md5.Sum(concatenatedData)
 
-	b.Hash = string(hex.EncodeToString(computedHash[:]))
+	b.Hash = string(computedHash[:])
+}
+
+func CreateBlock (blockData string, prevHash string) *Block {
+
+	block := &Block{"", blockData, prevHash}
+	block.ComputeHash()
+	return block;
+}
+
+func Genesis () *Block {
+
+	blockGenesis := CreateBlock("hardcode", "")
+	return blockGenesis;
 }
